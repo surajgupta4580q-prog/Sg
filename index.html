@@ -1,199 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SG Enterprises | Cycle Spare Parts Wholesale</title>
+<title>SG Enterprises</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f8;
+body { font-family: Arial; margin:0; background:#f4f6f8; }
+header { background:#0d1b2a; color:white; padding:15px; text-align:center; }
+
+.search-box { padding:10px; text-align:center; }
+.search-box input {
+    width:90%; padding:10px; border-radius:5px; border:1px solid gray;
 }
 
-/* HEADER */
-header {
-    background: #0d1b2a;
-    color: white;
-    padding: 15px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-header h1 {
-    color: #00d084;
-    margin: 0;
-}
-nav a {
-    color: white;
-    margin-left: 20px;
-    text-decoration: none;
-}
-nav a:hover {
-    color: #00d084;
-}
-
-/* HERO */
-.hero {
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-    url('https://images.unsplash.com/photo-1485965120184-e220f721d03e');
-    height: 85vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-align: center;
-}
-.hero h2 {
-    font-size: 45px;
-}
-.hero p {
-    font-size: 18px;
-}
-.btn {
-    background: #00d084;
-    padding: 12px 25px;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    margin-top: 15px;
-    cursor: pointer;
-}
-.btn:hover {
-    background: #009e63;
-}
-
-/* SECTION */
-.section {
-    padding: 60px 30px;
-    text-align: center;
-}
-.section h2 {
-    margin-bottom: 20px;
-}
-
-/* PRODUCTS */
 .products {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
 }
+
 .card {
-    background: white;
-    width: 260px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-.card img {
-    width: 100%;
-    border-radius: 10px;
+    background:blue;
+    width:230px;
+    margin:10px;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
-/* CONTACT */
-.contact {
-    background: #0d1b2a;
-    color: white;
-    padding: 40px;
-}
-
-/* FOOTER */
-footer {
-    background: black;
-    color: white;
-    text-align: center;
-    padding: 10px;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-    .hero h2 { font-size: 30px; }
-    .products { flex-direction: column; align-items: center; }
+.btn {
+    background:#00d084;
+    color:white;
+    padding:10px;
+    border:none;
+    border-radius:5px;
+    margin-top:10px;
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
-    <h1>SG Enterprises</h1>
-    <nav>
-        <a href="#">Home</a>
-        <a href="#products">Products</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </nav>
+<h2>SG Enterprises</h2>
+<p>Cycle Spare Parts Wholesale</p>
 </header>
 
-<div class="hero">
-    <div>
-        <h2>Wholesale Cycle Spare Parts Supplier</h2>
-        <p>Best Quality | Best Prices | Trusted by Dealers</p>
-
-        <!-- WhatsApp button -->
-        <a href="https://wa.me/919695781319" target="_blank">
-            <button class="btn">Contact on WhatsApp</button>
-        </a>
-    </div>
+<div class="search-box">
+<input type="text" id="search" placeholder="Search product..." onkeyup="searchProduct()">
 </div>
 
-<div class="section" id="products">
-    <h2>Our Products</h2>
-    <div class="products">
+<div class="products" id="productList"></div>
 
+<script>
+
+let products = [];
+
+async function loadCSV() {
+    const res = await fetch('stock.csv');
+    const data = await res.text();
+
+    const rows = data.split('\n').slice(1); // skip header
+
+    products = rows.map(row => row.split(',')[0]); // first column = product name
+
+    display(products);
+}
+
+function display(list){
+    let html = "";
+    list.forEach(p => {
+        if(!p) return;
+        html += `
         <div class="card">
-            <img src="https://images.unsplash.com/photo-1571333250630-f0230c320b6d">
-            <h3>Cycle Chains</h3>
-            <p>Strong and long-lasting chains.</p>
-        </div>
+            <h3>${p}</h3>
+            <button class="btn" onclick="order('${p}')">
+                Order on WhatsApp
+            </button>
+        </div>`;
+    });
+    document.getElementById("productList").innerHTML = html;
+}
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1518655048521-f130df041f66">
-            <h3>Brake Systems</h3>
-            <p>High safety braking solutions.</p>
-        </div>
+function searchProduct(){
+    let input = document.getElementById("search").value.toLowerCase();
+    let filtered = products.filter(p => p.toLowerCase().includes(input));
+    display(filtered);
+}
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1595433562696-6d9c5c6c9b0f">
-            <h3>Tyres & Tubes</h3>
-            <p>Durable tyres for all conditions.</p>
-        </div>
+function order(product){
+    let phone = "919695781319";
+    let msg = "Hello, I want to order: " + product;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+}
 
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231">
-            <h3>Pedals</h3>
-            <p>Heavy-duty pedals for smooth ride.</p>
-        </div>
+loadCSV();
 
-    </div>
-</div>
-
-<div class="section" id="about">
-    <h2>About Us</h2>
-    <p>
-        SG Enterprises is a trusted wholesale supplier of cycle spare parts.
-        We provide quality products at competitive prices for retailers and dealers.
-        Our focus is long-term business relationships and customer satisfaction.
-    </p>
-</div>
-
-<div class="contact" id="contact">
-    <h2>Contact Us</h2>
-    <p><strong>Owner:</strong> Suraj Gupta</p>
-    <p><strong>Phone:</strong> +91 9695781319</p>
-    <p><strong>Email:</strong> surajgupta4580q@email.com</p>
-
-    <a href="https://wa.me/919695781319" target="_blank">
-        <button class="btn">Chat on WhatsApp</button>
-    </a>
-</div>
-
-<footer>
-    <p>© 2026 SG Enterprises | All Rights Reserved</p>
-</footer>
+</script>
 
 </body>
 </html>
